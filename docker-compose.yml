@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: fleet
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in your shell or .env file}
+      POSTGRES_DB: fleet
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://fleet:${POSTGRES_PASSWORD}@db:5432/fleet
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in your shell or .env file}
+    depends_on:
+      - db
+volumes:
+  pgdata:
